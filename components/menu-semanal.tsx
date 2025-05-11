@@ -112,8 +112,11 @@ export function MenuSemanal() {
 
         <ScrollArea className="w-full whitespace-nowrap pb-4">
           <div className="flex w-max space-x-4 p-1">
-            {weekMenu.map((day) => (
-              <Card key={day.id} className="w-[300px] flex-shrink-0">
+            {weekMenu.map((day, index) => (
+              <Card 
+                key={`${day.id || index}`} 
+                className="w-[300px] flex-shrink-0"
+              >
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="bg-slate-100 rounded-full px-3 py-1 text-sm font-medium">{day.day}</div>
@@ -147,6 +150,7 @@ export function MenuSemanal() {
           
           <div className="grid grid-cols-3 gap-3">
             <Button 
+              key="confirm-menu"
               variant="outline" 
               className="w-full h-auto py-3 flex flex-col items-center"
               onClick={handleConfirm}
@@ -155,23 +159,23 @@ export function MenuSemanal() {
               <span className="text-xs">Confirmar menú</span>
             </Button>
             <Button 
+              key="generate-menu"
               variant="outline" 
               className="w-full h-auto py-3 flex flex-col items-center"
-              onClick={handleGenerateMenu} disabled={isGenerating}
+              onClick={handleGenerateMenu} 
+              disabled={isGenerating}
             >
               {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generando menú...
-            </>
-          ) : (
-            <>
-            
-            <ChefHat className="h-5 w-5" />
-            <span className="text-xs"> Generar otro menú</span>
-            </>
-          )}
-              
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generando menú...
+                </>
+              ) : (
+                <>
+                  <ChefHat className="h-5 w-5" />
+                  <span className="text-xs">Generar otro menú</span>
+                </>
+              )}
             </Button>
           
           </div>
