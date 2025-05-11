@@ -185,17 +185,44 @@ export async function generateWeeklyMenu(
         "weeklyMenu": [
           {
             "day": "Lun",
-            "recipe": "Nombre de la receta",
+            "recipe": {
+              "name": "Nombre de la receta",
+              "description": "Breve descripción del plato",
+              "ingredients": [
+                {
+                  "name": "Nombre del ingrediente",
+                  "quantity": "Cantidad",
+                  "unit": "Unidad de medida"
+                }
+              ],
+              "instructions": [
+                "Paso 1 de la preparación",
+                "Paso 2 de la preparación"
+              ],
+              "cookingTime": "Tiempo de preparación en minutos",
+              "servings": "Número de porciones",
+              "difficulty": "Fácil/Media/Difícil",
+              "nutritionalInfo": {
+                "calories": "Calorías por porción",
+                "protein": "Proteínas en gramos",
+                "carbs": "Carbohidratos en gramos",
+                "fat": "Grasas en gramos"
+              }
+            },
             "protein": "Proteína principal",
             "side": "Acompañamiento"
           }
         ]
       }
 
-      IMPORTANTE: Responde SOLO con el JSON, sin texto adicional ni backticks.
+     IMPORTANTE:
+      - Responde SOLO con el JSON, sin texto adicional ni backticks.
+      - **Cada 'recipe.name' y 'recipe.description' debe tener como máximo 100 caracteres**; si son más largos, recórtalos automáticamente.
+      - Asegúrate de que las recetas sean realistas y utilicen ingredientes disponibles.
+      - Considera las restricciones alimenticias y platos prohibidos.
     `,
     system:
-      "Eres un chef especializado en planificación de comidas familiares. Tu tarea es generar menús semanales personalizados basados en las preferencias y restricciones de la familia, así como los productos disponibles. IMPORTANTE: Responde SOLO con el JSON, sin texto adicional ni backticks.",
+      "Eres un chef especializado en planificación de comidas familiares. Tu tarea es generar menús semanales personalizados con recetas detalladas basadas en las preferencias y restricciones de la familia, así como los productos disponibles. IMPORTANTE: Responde SOLO con el JSON, sin texto adicional ni backticks.",
   })
 
   try {

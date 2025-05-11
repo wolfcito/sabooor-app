@@ -219,7 +219,7 @@ export async function saveWeeklyMenu(weeklyMenu: any[]) {
       .insert(
         weeklyMenu.map((menu) => ({
           day: menu.day,
-          recipe: menu.recipe,
+          recipe: JSON.stringify(menu.recipe),
           protein: menu.protein,
           side: menu.side,
         })),

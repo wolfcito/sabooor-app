@@ -53,7 +53,7 @@ export function Dashboard() {
         <div>
           <h2 className="text-lg font-medium mb-3">Accesos rápidos</h2>
           <div className="grid grid-cols-3 gap-3">
-            <Link href="/menu">
+            <Link href="/menu-semanal">
               <Button variant="outline" className="w-full h-auto py-3 flex flex-col items-center">
                 <Calendar className="h-5 w-5 mb-1" />
                 <span className="text-xs">Ver menú</span>

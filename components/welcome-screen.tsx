@@ -40,8 +40,12 @@ export function WelcomeScreen() {
       const { text } = await response.json()
       console.log("Respuesta del asistente:", text)
 
-      // Generamos el menú semanal basado en los datos almacenados
-      await generateMenu()
+      // Generamos el menú semanal usando la acción del servidor
+      const result = await generateMenu()
+
+      if (!result.success) {
+        throw new Error("Error al generar el menú")
+      }
 
       // Redirigimos al menú semanal
       router.push("/menu-semanal")
@@ -100,7 +104,7 @@ export function WelcomeScreen() {
           <div className="w-full space-y-4">
             <div className="flex gap-2">
               <Input
-                placeholder="Genera el menú para este mes..."
+                placeholder="Genera el menú para esta semana..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 onKeyDown={handleKeyPress}

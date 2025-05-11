@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ArrowLeft, Edit, Drumstick, Carrot, Loader2, ChefHat, Calendar } from "lucide-react"
+import { ArrowLeft, Edit, Drumstick, Carrot, Loader2, ChefHat, Calendar, Clock, Badge, Flame, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { Card, CardContent } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { createClientSupabaseClient } from "@/lib/supabase"
 import { generateMenu } from "@/app/actions"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 
 type MealDay = {
   id: string
@@ -22,6 +23,12 @@ export function MenuSemanal() {
   const [isLoading, setIsLoading] = useState(true)
   const [isGenerating, setIsGenerating] = useState(false)
   const [weekMenu, setWeekMenu] = useState<MealDay[]>([])
+
+  const [expandedCard, setExpandedCard] = useState<number | null>(null)
+
+  const toggleExpand = (index: number) => {
+    setExpandedCard(expandedCard === index ? null : index)
+  }
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -110,36 +117,121 @@ export function MenuSemanal() {
       <main className="flex-1 p-4">
        
 
-        <ScrollArea className="w-full whitespace-nowrap pb-4">
-          <div className="flex w-max space-x-4 p-1">
-            {weekMenu.map((day, index) => (
-              <Card 
-                key={`${day.id || index}`} 
-                className="w-[300px] flex-shrink-0"
+      <TooltipProvider>
+      <ScrollArea className="w-full whitespace-nowrap pb-4">
+        <div className="flex w-max space-x-4 p-1">
+          {weekMenu.map((day, index) => {
+            const recipeObj = JSON.parse(day.recipe)
+
+            return (
+              <Card
+                key={`${index}`}
+                className={`transition-all duration-300 flex-shrink-0 ${
+                  expandedCard === index ? "w-[400px]" : "w-[300px]"
+                }`}
               >
                 <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="bg-slate-100 rounded-full px-3 py-1 text-sm font-medium">{day.day}</div>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <div className="flex items-center justify-between mb-3">
+                    <Badge variant="outline" className="bg-primary/10 text-primary">
+                      {day.day}
+                    </Badge>
+                    {/* <Button variant="ghost" size="icon" className="h-8 w-8">
                       <Edit className="h-4 w-4" />
                       <span className="sr-only">Editar</span>
-                    </Button>
+                    </Button> */}
                   </div>
-                  <h3 className="font-medium line-clamp-2 min-h-[2.5rem]">{day.recipe}</h3>
-                  <div className="flex items-center mt-2 text-sm text-slate-500">
-                    <Drumstick className="h-4 w-4 mr-1 flex-shrink-0" />
-                    <span className="truncate">{day.protein}</span>
+
+                  <h3 className="font-medium text-lg mb-2 line-clamp-2 min-h-[3rem]">{recipeObj.name}</h3>
+
+                  <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{recipeObj.description}</p>
+
+                  <div className="grid grid-cols-2 gap-2 mb-3">
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center text-sm text-slate-500">
+                          <Clock className="h-4 w-4 mr-1 flex-shrink-0" />
+                          <span className="truncate">{recipeObj.cookingTime} min</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Tiempo de preparación</p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center text-sm text-slate-500">
+                          <Users className="h-4 w-4 mr-1 flex-shrink-0" />
+                          <span className="truncate">{recipeObj.servings} porciones</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Porciones</p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center text-sm text-slate-500">
+                          <Flame className="h-4 w-4 mr-1 flex-shrink-0" />
+                          <span className="truncate">{recipeObj.difficulty}</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Dificultad</p>
+                      </TooltipContent>
+                    </Tooltip>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center text-sm text-slate-500">
+                          <Drumstick className="h-4 w-4 mr-1 flex-shrink-0" />
+                          <span className="truncate">{day.protein}</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Proteína principal</p>
+                      </TooltipContent>
+                    </Tooltip>
                   </div>
-                  <div className="flex items-center mt-1 text-sm text-slate-500">
+
+                  {expandedCard === index && (
+                    <div className="mt-3 border-t pt-3">
+                      <h4 className="font-medium mb-2">Ingredientes principales:</h4>
+                      <ul className="text-sm space-y-1 mb-3">
+                        {recipeObj.ingredients.slice(0, 3).map((ing, i) => (
+                          <li key={i} className="flex items-start">
+                            <span className="mr-1">•</span>
+                            <span>
+                              {ing.name} - {ing.quantity} {ing.unit}
+                            </span>
+                          </li>
+                        ))}
+                        {recipeObj.ingredients.length > 3 && (
+                          <li className="text-muted-foreground">+ {recipeObj.ingredients.length - 3} más</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
+                </CardContent>
+
+                <CardFooter className="px-4 pb-4 pt-0 flex justify-between">
+                  <div className="flex items-center text-sm text-slate-500">
                     <Carrot className="h-4 w-4 mr-1 flex-shrink-0" />
                     <span className="truncate">{day.side}</span>
                   </div>
-                </CardContent>
+
+                  <Button variant="ghost" size="sm" onClick={() => toggleExpand(index)}>
+                    {expandedCard === index ? "Ver menos" : "Ver más"}
+                  </Button>
+                </CardFooter>
               </Card>
-            ))}
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+            )
+          })}
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </TooltipProvider>
       </main>
 
       {/* Footer */}
