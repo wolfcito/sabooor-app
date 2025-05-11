@@ -108,7 +108,7 @@ export function ListaCompra() {
           <ArrowLeft className="h-5 w-5" />
           <span className="sr-only">Atrás</span>
         </Button>
-        <h1 className="text-xl font-medium ml-2">Lista de compra</h1>
+        <h1 className="text-xl font-medium ml-2">Mis compras</h1>
       </header>
 
       {/* Body */}
@@ -153,11 +153,11 @@ export function ListaCompra() {
       {/* Footer */}
       <footer className="p-4 border-t flex gap-2">
         <Button variant="outline" className="flex-1" onClick={markAll}>
-          Marcar todo
+          Marcar
         </Button>
         <Button className="flex-1" onClick={downloadPDF}>
           <Download className="h-4 w-4 mr-2" />
-          Descargar PDF
+          Descargar lista
         </Button>
       </footer>
     </div>
