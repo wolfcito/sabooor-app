@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Menu, Loader2, Calendar, ShoppingCart, Utensils, Star, ChefHat } from "lucide-react"
+import { Menu, Loader2, Calendar, ShoppingCart, Utensils, Star, ChefHat, Settings, FileText, BarChart2 } from "lucide-react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -103,11 +103,11 @@ export function WelcomeScreen() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             {/* <DropdownMenuItem onClick={() => router.push("/dashboard")}>Dashboard</DropdownMenuItem> */}
-            <DropdownMenuItem onClick={() => router.push("/subir-factura")}>Subir factura</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push("/menu-semanal")}>Menú semanal</DropdownMenuItem>
+            {/* <DropdownMenuItem onClick={() => router.push("/subir-factura")}>Subir factura</DropdownMenuItem> */}
+            {/* <DropdownMenuItem onClick={() => router.push("/menu-semanal")}>Menú semanal</DropdownMenuItem> */}
             <DropdownMenuItem onClick={() => router.push("/lista-compra")}>Lista de compra</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/sobrantes")}>Registrar sobrantes</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => router.push("/metricas")}>Métricas y ahorro</DropdownMenuItem>
+            {/* <DropdownMenuItem onClick={() => router.push("/metricas")}>Métricas y ahorro</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
@@ -189,7 +189,7 @@ export function WelcomeScreen() {
               className="w-full h-auto py-3 flex flex-col items-center"
               onClick={() => router.push("/configuracion")}
             >
-              <Calendar className="h-5 w-5 mb-1" />
+              <Settings className="h-5 w-5 mb-1" />
               <span className="text-xs">Gustos</span>
             </Button>
            
@@ -198,7 +198,7 @@ export function WelcomeScreen() {
               className="w-full h-auto py-3 flex flex-col items-center"
               onClick={() => router.push("/subir-factura")}
             >
-              <ShoppingCart className="h-5 w-5 mb-1" />
+              <FileText className="h-5 w-5 mb-1" />
               <span className="text-xs">Factura</span>
             </Button>
             
@@ -207,15 +207,15 @@ export function WelcomeScreen() {
               className="w-full h-auto py-3 flex flex-col items-center"
               onClick={() => router.push("/metricas")}
             >
-              <Utensils className="h-5 w-5 mb-1" />
+             <BarChart2 className="h-5 w-5 mb-1" />
               <span className="text-xs">Reporte</span>
             </Button>
             <Button 
               variant="outline" 
               className="w-full h-auto py-3 flex flex-col items-center"
               onClick={() => router.push("/menu-semanal")}
-            >
-              <Calendar className="h-5 w-5 mb-1" />
+            > 
+            <Utensils className="h-5 w-5 mb-1" />  
               <span className="text-xs">Menú</span>
             </Button>
           </div>
