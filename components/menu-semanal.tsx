@@ -122,7 +122,7 @@ export function MenuSemanal() {
         <ScrollArea className="w-full whitespace-nowrap pb-4">
           <div className="flex w-max space-x-4 p-1">
             {weekMenu.map((day) => (
-              <Card key={day.id} className="w-[200px] flex-shrink-0">
+              <Card key={day.id} className="w-[300px] flex-shrink-0">
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between mb-2">
                     <div className="bg-slate-100 rounded-full px-3 py-1 text-sm font-medium">{day.day}</div>
@@ -131,14 +131,14 @@ export function MenuSemanal() {
                       <span className="sr-only">Editar</span>
                     </Button>
                   </div>
-                  <h3 className="font-medium">{day.recipe}</h3>
+                  <h3 className="font-medium line-clamp-2 min-h-[2.5rem]">{day.recipe}</h3>
                   <div className="flex items-center mt-2 text-sm text-slate-500">
-                    <Drumstick className="h-4 w-4 mr-1" />
-                    <span>{day.protein}</span>
+                    <Drumstick className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="truncate">{day.protein}</span>
                   </div>
                   <div className="flex items-center mt-1 text-sm text-slate-500">
-                    <Carrot className="h-4 w-4 mr-1" />
-                    <span>{day.side}</span>
+                    <Carrot className="h-4 w-4 mr-1 flex-shrink-0" />
+                    <span className="truncate">{day.side}</span>
                   </div>
                 </CardContent>
               </Card>
