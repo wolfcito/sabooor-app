@@ -7,6 +7,7 @@ import { ArrowLeft, Upload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Loader2 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { processReceipt } from "@/app/actions"
 
 export function SubirFactura() {
   const [step, setStep] = useState<"upload" | "processing">("upload")
@@ -28,14 +29,25 @@ export function SubirFactura() {
     }
   }
 
-  const handleSubmit = () => {
-    if (file) {
+  const handleSubmit = async () => {
+    if (file && preview) {
       setStep("processing")
 
-      // Simulate processing with AI
-      setTimeout(() => {
+      try {
+        // Procesar la imagen con OpenAI
+        const result = await processReceipt(preview)
+
+        if (result.success) {
+          router.push("/validar-datos")
+        } else {
+          // En caso de error, también redirigimos a validar datos
+          // pero podríamos mostrar un mensaje de error
+          router.push("/validar-datos")
+        }
+      } catch (error) {
+        console.error("Error processing receipt:", error)
         router.push("/validar-datos")
-      }, 3000)
+      }
     }
   }
 

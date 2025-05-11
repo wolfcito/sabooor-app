@@ -3,12 +3,14 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Minus, Plus, X } from "lucide-react"
+import { Minus, Plus, X, Loader2 } from "lucide-react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation"
+import { saveFamilyData } from "@/app/actions"
 
 type FamilyMember = {
   id: string
@@ -23,6 +25,8 @@ type Restriction = {
 }
 
 export function OnboardingFamiliar() {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([
     { id: "1", type: "mama", count: 1 },
     { id: "2", type: "papa", count: 1 },
@@ -106,6 +110,24 @@ export function OnboardingFamiliar() {
         return "Niño"
       default:
         return type
+    }
+  }
+
+  const handleSaveAndContinue = async () => {
+    setIsLoading(true)
+
+    try {
+      // Guardar datos en Supabase y procesar con OpenAI
+      await saveFamilyData(familyMembers, restrictions, prohibitedDishes)
+
+      // Redirigir al dashboard
+      router.push("/dashboard")
+    } catch (error) {
+      console.error("Error saving family data:", error)
+      // En caso de error, también redirigimos al dashboard
+      router.push("/dashboard")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -216,7 +238,16 @@ export function OnboardingFamiliar() {
 
       {/* Footer */}
       <footer className="p-4 border-t">
-        <Button className="w-full h-12">Guardar y continuar</Button>
+        <Button className="w-full h-12" onClick={handleSaveAndContinue} disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Guardando...
+            </>
+          ) : (
+            "Guardar y continuar"
+          )}
+        </Button>
       </footer>
     </div>
   )

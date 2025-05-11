@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { ArrowLeft, Plus, Sparkles } from "lucide-react"
+import { ArrowLeft, Plus, Sparkles, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
+import { saveLeftoversData } from "@/app/actions"
 
 type Leftover = {
   id: string
@@ -16,6 +17,7 @@ type Leftover = {
 
 export function RegistroSobrantes() {
   const router = useRouter()
+  const [isLoading, setIsLoading] = useState(false)
   const [meal, setMeal] = useState<string>("")
   const [product, setProduct] = useState<string>("")
   const [quantity, setQuantity] = useState<string>("")
@@ -30,6 +32,24 @@ export function RegistroSobrantes() {
       setLeftovers([...leftovers, { id: newId, meal, product, quantity }])
       setProduct("")
       setQuantity("")
+    }
+  }
+
+  const handleSaveLeftovers = async () => {
+    setIsLoading(true)
+
+    try {
+      // Guardar sobrantes en Supabase y procesar con OpenAI
+      await saveLeftoversData(leftovers)
+
+      // Redirigir al dashboard
+      router.push("/dashboard")
+    } catch (error) {
+      console.error("Error saving leftovers:", error)
+      // En caso de error, también redirigimos al dashboard
+      router.push("/dashboard")
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -112,6 +132,20 @@ export function RegistroSobrantes() {
           </div>
         </div>
       </main>
+
+      {/* Footer */}
+      <footer className="p-4 border-t">
+        <Button className="w-full" onClick={handleSaveLeftovers} disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Guardando...
+            </>
+          ) : (
+            "Guardar sobrantes"
+          )}
+        </Button>
+      </footer>
     </div>
   )
 }

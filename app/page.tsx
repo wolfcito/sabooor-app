@@ -1,5 +1,5 @@
-import { OnboardingFamiliar } from "@/components/onboarding-familiar"
+import { WelcomeScreen } from "@/components/welcome-screen"
 
 export default function Home() {
-  return <OnboardingFamiliar />
+  return <WelcomeScreen />
 }
