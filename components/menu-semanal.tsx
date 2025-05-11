@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ArrowLeft, Edit, Drumstick, Carrot, Loader2 } from "lucide-react"
+import { ArrowLeft, Edit, Drumstick, Carrot, Loader2, ChefHat, Calendar } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
@@ -103,21 +103,12 @@ export function MenuSemanal() {
           <ArrowLeft className="h-5 w-5" />
           <span className="sr-only">Atrás</span>
         </Button>
-        <h1 className="text-xl font-medium ml-2">Tu menú de la semana</h1>
+        <h1 className="text-xl font-medium ml-2">Menú semanal</h1>
       </header>
 
       {/* Body */}
       <main className="flex-1 p-4">
-        <Button className="w-full mb-4" onClick={handleGenerateMenu} disabled={isGenerating}>
-          {isGenerating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Generando menú...
-            </>
-          ) : (
-            "Generar nuevo menú"
-          )}
-        </Button>
+       
 
         <ScrollArea className="w-full whitespace-nowrap pb-4">
           <div className="flex w-max space-x-4 p-1">
@@ -149,11 +140,44 @@ export function MenuSemanal() {
       </main>
 
       {/* Footer */}
+  
       <footer className="p-4 border-t">
-        <Button className="w-full" onClick={handleConfirm}>
-          Confirmar menú
-        </Button>
+  
+      <div>
+          
+          <div className="grid grid-cols-3 gap-3">
+            <Button 
+              variant="outline" 
+              className="w-full h-auto py-3 flex flex-col items-center"
+              onClick={handleConfirm}
+            >
+              <Calendar className="h-5 w-5 mb-1" />
+              <span className="text-xs">Confirmar menú</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full h-auto py-3 flex flex-col items-center"
+              onClick={handleGenerateMenu} disabled={isGenerating}
+            >
+              {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generando menú...
+            </>
+          ) : (
+            <>
+            
+            <ChefHat className="h-5 w-5" />
+            <span className="text-xs"> Generar otro menú</span>
+            </>
+          )}
+              
+            </Button>
+          
+          </div>
+        </div>
       </footer>
+      
     </div>
   )
 }
