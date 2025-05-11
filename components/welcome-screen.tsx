@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Menu, Loader2, Calendar, ShoppingCart, Utensils, Star, ChefHat } from "lucide-react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
@@ -8,11 +8,37 @@ import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { generateMenu } from "@/app/actions"
+import { createClientSupabaseClient } from "@/lib/supabase"
+
+type MealDay = {
+  id: string
+  day: string
+  recipe: string    // JSON-string
+  protein: string
+  side: string
+}
 
 export function WelcomeScreen() {
   const router = useRouter()
   const [prompt, setPrompt] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+
+  const [weekMenu, setWeekMenu] = useState<MealDay[]>([])
+  const [favIndex, setFavIndex] = useState(0)
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      const supabase = createClientSupabaseClient()
+      const { data, error } = await supabase.from("weekly_menu").select("*")
+      console.log('data',{data})
+      if (!error && data) setWeekMenu(data)
+    }
+    fetchMenu()
+  }, [])
+
+  const favoriteRecipe = weekMenu.length > 0
+    ? JSON.parse(weekMenu[favIndex].recipe)
+    : null
 
   const handleCook = async () => {
     if (!prompt.trim()) {
@@ -125,20 +151,27 @@ export function WelcomeScreen() {
           </div>
           
           
-          {/* Vista previa de último menú */}
-        <div className="my-8">
-          <h2 className="font-medium mb-3">Favoritos</h2>
+        {/* Favoritos */}
+      <div className="my-8">
+        <h2 className="font-medium mb-3">Favorito</h2>
+
+        {favoriteRecipe ? (
           <div className="bg-white rounded-lg border p-4">
-            <div className="flex items-center">
-              <div className="flex px-3 py-1 font-medium"><Star className="h-5 w-5 fill-yellow-500" />x5</div>
-              <div className="ml-auto">
-                <Utensils className="h-5 w-5 text-slate-400" />
-              </div>
+            <div className="flex items-center mb-2">
+              <Star className="h-5 w-5 fill-yellow-500 mr-2" />
+              <span className="font-semibold">{favoriteRecipe.name}</span>
             </div>
-            <h3 className="font-medium mt-2">Pollo al horno con verduras</h3>
-            <p className="text-sm text-slate-500">4 porciones</p>
+            <p className="text-sm text-slate-500">
+              {favoriteRecipe.servings} porciones
+            </p>
+            <div className="mt-2 text-sm text-slate-600 line-clamp-2">
+              {favoriteRecipe.description}
+            </div>
           </div>
-        </div>
+        ) : (
+          <p className="text-sm text-slate-500">Aún no hay un favorito generado.</p>
+        )}
+      </div>
 
         
 
@@ -159,14 +192,7 @@ export function WelcomeScreen() {
               <Calendar className="h-5 w-5 mb-1" />
               <span className="text-xs">Gustos</span>
             </Button>
-            <Button 
-              variant="outline" 
-              className="w-full h-auto py-3 flex flex-col items-center"
-              onClick={() => router.push("/menu-semanal")}
-            >
-              <Calendar className="h-5 w-5 mb-1" />
-              <span className="text-xs">Menú</span>
-            </Button>
+           
             <Button 
               variant="outline" 
               className="w-full h-auto py-3 flex flex-col items-center"
@@ -175,6 +201,7 @@ export function WelcomeScreen() {
               <ShoppingCart className="h-5 w-5 mb-1" />
               <span className="text-xs">Factura</span>
             </Button>
+            
             <Button 
               variant="outline" 
               className="w-full h-auto py-3 flex flex-col items-center"
@@ -182,6 +209,14 @@ export function WelcomeScreen() {
             >
               <Utensils className="h-5 w-5 mb-1" />
               <span className="text-xs">Reporte</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full h-auto py-3 flex flex-col items-center"
+              onClick={() => router.push("/menu-semanal")}
+            >
+              <Calendar className="h-5 w-5 mb-1" />
+              <span className="text-xs">Menú</span>
             </Button>
           </div>
         </div>
