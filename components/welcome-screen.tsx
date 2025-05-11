@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Menu, Loader2, Calendar, ShoppingCart, Utensils, Star, ChefHat } from "lucide-react"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
@@ -85,12 +86,14 @@ export function WelcomeScreen() {
       <main className="flex-1 flex flex-col items-center p-6 justify-center">
         <div className="w-full max-w-md flex flex-col">
           {/* Logo y nombre */}
-          <div className="mb-6 flex flex-col">
-            {/* <div className="h-24 w-24 relative mb-4">
-              <Image src="/placeholder.svg?height=96&width=96" alt="Sabooor Logo" fill className="object-contain" />
-            </div> */}
+          <div className="mb-6 flex items-center">
+            <div className="h-24 w-24 relative mb-4">
+              <Image src="/logo.png" alt="Sabooor Logo" fill className="object-contain" />
+            </div>
+            <div>
             <h1 className="text-4xl font-bold mb-1">Sabooor</h1>
             <p className="text-lg text-slate-500 italic">tu chefcito...</p>
+            </div>
           </div>
 
           {/* Input y botón */}
