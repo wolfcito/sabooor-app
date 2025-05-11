@@ -5,27 +5,56 @@ import { openai } from "@ai-sdk/openai"
 export async function processReceiptImage(imageBase64: string) {
   const base64Image = imageBase64.split(",")[1] // Eliminar el prefijo de data URL si existe
 
-  const { text } = await generateText({
-    model: openai("gpt-4o"),
-    prompt: `
-      Analiza esta imagen de una factura de supermercado y extrae la siguiente información en formato JSON:
-      {
-        "products": [
-          {
-            "name": "Nombre del producto",
-            "quantity_units": número de unidades (si aplica),
-            "quantity_kg": cantidad en kilogramos (si aplica),
-            "unit_price": precio unitario,
-            "total_price": precio total
-          }
-        ]
-      }
-      
-      Asegúrate de extraer todos los productos visibles en la factura.
-    `,
-    system:
-      "Eres un asistente especializado en extraer información de facturas de supermercado. Tu tarea es analizar imágenes de facturas y extraer información detallada de los productos comprados.",
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: "gpt-4-vision-preview",
+      messages: [
+        {
+          role: "system",
+          content: "Eres un asistente especializado en extraer información de facturas de supermercado. Tu tarea es analizar imágenes de facturas y extraer información detallada de los productos comprados."
+        },
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `
+                Analiza esta imagen de una factura de supermercado y extrae la siguiente información en formato JSON:
+                {
+                  "products": [
+                    {
+                      "name": "Nombre del producto",
+                      "quantity_units": número de unidades (si aplica),
+                      "quantity_kg": cantidad en kilogramos (si aplica),
+                      "unit_price": precio unitario,
+                      "total_price": precio total
+                    }
+                  ]
+                }
+                
+                Asegúrate de extraer todos los productos visibles en la factura.
+              `
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`
+              }
+            }
+          ]
+        }
+      ],
+      max_tokens: 1000
+    })
   })
+
+  const data = await response.json()
+  const text = data.choices[0].message.content
 
   try {
     return JSON.parse(text)

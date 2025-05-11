@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { generateText } from "ai"
-import { openai } from "@ai-sdk/openai"
 import { generateMenu } from "@/app/actions"
 
 export function WelcomeScreen() {
@@ -26,13 +24,21 @@ export function WelcomeScreen() {
     setIsLoading(true)
 
     try {
-      // Procesamos el prompt con OpenAI
-      const { text } = await generateText({
-        model: openai("gpt-4o"),
-        prompt: prompt,
-        system:
-          "Eres un asistente culinario especializado en planificación de comidas familiares. Tu tarea es interpretar las solicitudes del usuario y proporcionar respuestas útiles relacionadas con la planificación de comidas, recetas y consejos de cocina.",
+      // Llamamos a nuestra API route
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ prompt }),
       })
+
+      if (!response.ok) {
+        throw new Error("Error en la generación del texto")
+      }
+
+      const { text } = await response.json()
+      console.log("Respuesta del asistente:", text)
 
       // Generamos el menú semanal basado en los datos almacenados
       await generateMenu()
