@@ -54,6 +54,12 @@ export function WelcomeScreen() {
     }
   }
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !isLoading) {
+      handleCook()
+    }
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header con menú hamburguesa */}
@@ -95,6 +101,7 @@ export function WelcomeScreen() {
                 placeholder="Genera el menú para este mes..."
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
+                onKeyDown={handleKeyPress}
                 className="h-12"
               />
             </div>
