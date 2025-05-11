@@ -34,7 +34,7 @@ export function CatalogoProductos() {
   }
 
   const handleSave = () => {
-    router.push("/menu-semanal")
+    router.push("/")
   }
 
   return (
