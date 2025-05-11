@@ -13,9 +13,11 @@ export function SubirFactura() {
   const [step, setStep] = useState<"upload" | "processing">("upload")
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError(null)
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0]
       setFile(selectedFile)
@@ -32,6 +34,7 @@ export function SubirFactura() {
   const handleSubmit = async () => {
     if (file && preview) {
       setStep("processing")
+      setError(null)
 
       try {
         // Procesar la imagen con OpenAI
@@ -40,13 +43,13 @@ export function SubirFactura() {
         if (result.success) {
           router.push("/validar-datos")
         } else {
-          // En caso de error, también redirigimos a validar datos
-          // pero podríamos mostrar un mensaje de error
-          router.push("/validar-datos")
+          setError(result.error || "Error al procesar la factura")
+          setStep("upload")
         }
       } catch (error) {
         console.error("Error processing receipt:", error)
-        router.push("/validar-datos")
+        setError("Error al procesar la factura. Por favor, intenta de nuevo.")
+        setStep("upload")
       }
     }
   }
@@ -66,6 +69,11 @@ export function SubirFactura() {
       <main className="flex-1 p-4 flex flex-col items-center justify-center">
         {step === "upload" ? (
           <div className="w-full max-w-md">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 rounded-lg p-4 mb-4">
+                {error}
+              </div>
+            )}
             <div
               className="border-2 border-dashed border-slate-300 rounded-lg p-6 flex flex-col items-center justify-center h-[200px] mb-4"
               style={{

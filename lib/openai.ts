@@ -5,61 +5,98 @@ import { openai } from "@ai-sdk/openai"
 export async function processReceiptImage(imageBase64: string) {
   const base64Image = imageBase64.split(",")[1] // Eliminar el prefijo de data URL si existe
 
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-    },
-    body: JSON.stringify({
-      model: "gpt-4-vision-preview",
-      messages: [
-        {
-          role: "system",
-          content: "Eres un asistente especializado en extraer información de facturas de supermercado. Tu tarea es analizar imágenes de facturas y extraer información detallada de los productos comprados."
-        },
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: `
-                Analiza esta imagen de una factura de supermercado y extrae la siguiente información en formato JSON:
-                {
-                  "products": [
-                    {
-                      "name": "Nombre del producto",
-                      "quantity_units": número de unidades (si aplica),
-                      "quantity_kg": cantidad en kilogramos (si aplica),
-                      "unit_price": precio unitario,
-                      "total_price": precio total
-                    }
-                  ]
-                }
-                
-                Asegúrate de extraer todos los productos visibles en la factura.
-              `
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`
-              }
-            }
-          ]
-        }
-      ],
-      max_tokens: 1000
-    })
-  })
-
-  const data = await response.json()
-  const text = data.choices[0].message.content
-
   try {
-    return JSON.parse(text)
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o",
+        messages: [
+          {
+            role: "system",
+            content: "Eres un asistente especializado en extraer información de facturas de supermercado. Tu tarea es analizar imágenes de facturas y extraer información detallada de los productos comprados. IMPORTANTE: Responde SOLO con el JSON, sin backticks ni texto adicional. Asegúrate de que el JSON esté completo y bien formateado."
+          },
+          {
+            role: "user",
+            content: [
+              {
+                type: "text",
+                text: `
+                  Analiza esta imagen de una factura de supermercado y extrae la siguiente información en formato JSON:
+                  {
+                    "products": [
+                      {
+                        "name": "Nombre del producto",
+                        "quantity_units": número de unidades (si aplica),
+                        "quantity_kg": cantidad en kilogramos (si aplica),
+                        "unit_price": precio unitario,
+                        "total_price": precio total
+                      }
+                    ]
+                  }
+                  
+                  Asegúrate de extraer todos los productos visibles en la factura.
+                  IMPORTANTE: Asegúrate de que el JSON esté completo y bien formateado.
+                `
+              },
+              {
+                type: "image_url",
+                image_url: {
+                  url: `data:image/jpeg;base64,${base64Image}`
+                }
+              }
+            ]
+          }
+        ],
+        max_tokens: 2000,
+        temperature: 0.3
+      })
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json()
+      console.error("OpenAI API Error:", errorData)
+      throw new Error(`OpenAI API error: ${errorData.error?.message || 'Unknown error'}`)
+    }
+
+    const data = await response.json()
+    console.log("OpenAI API Response:", data)
+
+    if (!data.choices?.[0]?.message?.content) {
+      console.error("Unexpected API response structure:", data)
+      throw new Error("Unexpected API response structure")
+    }
+
+    const text = data.choices[0].message.content
+    console.log("Extracted text:", text)
+
+    try {
+      // Limpiar la respuesta de posibles backticks y texto adicional
+      const cleanText = text.replace(/```json\n?|\n?```/g, '').trim()
+      
+      // Verificar si el JSON está completo
+      if (!cleanText.endsWith('}')) {
+        console.error("Incomplete JSON response")
+        throw new Error("Incomplete JSON response")
+      }
+
+      const parsedData = JSON.parse(cleanText)
+      
+      // Verificar que la estructura sea correcta
+      if (!parsedData.products || !Array.isArray(parsedData.products)) {
+        throw new Error("Invalid JSON structure")
+      }
+
+      return parsedData
+    } catch (error) {
+      console.error("Error parsing OpenAI response:", error)
+      return { products: [] }
+    }
   } catch (error) {
-    console.error("Error parsing OpenAI response:", error)
+    console.error("Error in processReceiptImage:", error)
     return { products: [] }
   }
 }

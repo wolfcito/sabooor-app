@@ -52,15 +52,22 @@ export async function processReceipt(imageBase64: string) {
     // Procesar imagen con OpenAI
     const aiResponse = await processReceiptImage(imageBase64)
 
-    // Guardar productos extraídos
-    if (aiResponse.products && aiResponse.products.length > 0) {
-      await saveProducts(aiResponse.products)
+    // Verificar si la respuesta tiene productos
+    if (!aiResponse || !aiResponse.products) {
+      console.error("Invalid AI response:", aiResponse)
+      return { success: false, error: "Invalid AI response" }
     }
 
-    return { success: true, products: aiResponse.products }
+    // Guardar productos extraídos
+    if (aiResponse.products.length > 0) {
+      await saveProducts(aiResponse.products)
+      return { success: true, products: aiResponse.products }
+    } else {
+      return { success: false, error: "No products found in the receipt" }
+    }
   } catch (error) {
     console.error("Error processing receipt:", error)
-    return { success: false, error }
+    return { success: false, error: error instanceof Error ? error.message : "Unknown error" }
   }
 }
 
