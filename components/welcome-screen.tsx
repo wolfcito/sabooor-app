@@ -119,12 +119,12 @@ export function WelcomeScreen() {
         </div>
       </main>
 
-      {/* Footer */}
+      {/* Footer
       <footer className="p-4 border-t">
         <Button className="w-full" onClick={() => router.push("/dashboard")}>
           Guardar y continuar
         </Button>
-      </footer>
+      </footer> */}
     </div>
   )
 }

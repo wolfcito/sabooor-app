@@ -188,19 +188,39 @@ export async function generateWeeklyMenu(
             "recipe": "Nombre de la receta",
             "protein": "Proteína principal",
             "side": "Acompañamiento"
-          },
-          ...
+          }
         ]
       }
+
+      IMPORTANTE: Responde SOLO con el JSON, sin texto adicional ni backticks.
     `,
     system:
-      "Eres un chef especializado en planificación de comidas familiares. Tu tarea es generar menús semanales personalizados basados en las preferencias y restricciones de la familia, así como los productos disponibles.",
+      "Eres un chef especializado en planificación de comidas familiares. Tu tarea es generar menús semanales personalizados basados en las preferencias y restricciones de la familia, así como los productos disponibles. IMPORTANTE: Responde SOLO con el JSON, sin texto adicional ni backticks.",
   })
 
   try {
-    return JSON.parse(text)
+    // Limpiar la respuesta de posibles backticks y texto adicional
+    const cleanText = text.replace(/```json\n?|\n?```/g, '').trim()
+    console.log("Cleaned response:", cleanText)
+    
+    // Verificar si el texto comienza con un JSON válido
+    if (!cleanText.startsWith('{')) {
+      console.error("Invalid response format:", cleanText)
+      return { weeklyMenu: [] }
+    }
+
+    const parsedData = JSON.parse(cleanText)
+    
+    // Verificar la estructura del JSON
+    if (!parsedData.weeklyMenu || !Array.isArray(parsedData.weeklyMenu)) {
+      console.error("Invalid JSON structure:", parsedData)
+      return { weeklyMenu: [] }
+    }
+
+    return parsedData
   } catch (error) {
     console.error("Error parsing OpenAI response:", error)
+    console.error("Raw response:", text)
     return { weeklyMenu: [] }
   }
 }

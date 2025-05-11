@@ -1,15 +1,20 @@
-import { Camera, Calendar, ShoppingCart, Utensils, User, Menu } from "lucide-react"
+"use client"
+
+import { Camera, Calendar, ShoppingCart, Utensils, User, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 
 export function Dashboard() {
+  const router = useRouter()
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header fijo */}
       <header className="sticky top-0 z-10 bg-white border-b p-4 flex items-center justify-between">
-        <Button variant="ghost" size="icon">
-          <Menu className="h-6 w-6" />
-          <span className="sr-only">Menú</span>
+      <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft className="h-5 w-5" />
+          <span className="sr-only">Atrás</span>
         </Button>
         <h1 className="text-xl font-medium">Dashboard</h1>
         <Button variant="ghost" size="icon">
