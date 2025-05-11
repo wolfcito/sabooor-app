@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, Loader2, Calendar, ShoppingCart, Utensils, Star } from "lucide-react"
+import { Menu, Loader2, Calendar, ShoppingCart, Utensils, Star, ChefHat } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
@@ -95,7 +95,7 @@ export function WelcomeScreen() {
 
           {/* Input y botón */}
           <div className="w-full space-y-4">
-            <div className="space-y-2">
+            <div className="flex gap-2">
               <Input
                 placeholder="Genera el menú para este mes..."
                 value={prompt}
@@ -103,17 +103,18 @@ export function WelcomeScreen() {
                 onKeyDown={handleKeyPress}
                 className="h-12"
               />
+              <Button 
+                className="h-12 w-12 rounded-lg p-0" 
+                onClick={handleCook} 
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <ChefHat className="h-5 w-5" />
+                )}
+              </Button>
             </div>
-            <Button className="w-full h-12 text-lg" onClick={handleCook} disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Procesando...
-                </>
-              ) : (
-                "Hora de cocinar"
-              )}
-            </Button>
           </div>
           
           
