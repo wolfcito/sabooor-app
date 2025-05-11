@@ -76,7 +76,7 @@ export function WelcomeScreen() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuItem onClick={() => router.push("/dashboard")}>Dashboard</DropdownMenuItem>
+            {/* <DropdownMenuItem onClick={() => router.push("/dashboard")}>Dashboard</DropdownMenuItem> */}
             <DropdownMenuItem onClick={() => router.push("/subir-factura")}>Subir factura</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/menu-semanal")}>Menú semanal</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/lista-compra")}>Lista de compra</DropdownMenuItem>
@@ -178,10 +178,10 @@ export function WelcomeScreen() {
             <Button 
               variant="outline" 
               className="w-full h-auto py-3 flex flex-col items-center"
-              onClick={() => router.push("/sobrantes")}
+              onClick={() => router.push("/metricas")}
             >
               <Utensils className="h-5 w-5 mb-1" />
-              <span className="text-xs">Sobras</span>
+              <span className="text-xs">Reporte</span>
             </Button>
           </div>
         </div>

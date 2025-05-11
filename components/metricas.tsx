@@ -150,7 +150,7 @@ export function Metricas() {
               Actualizando métricas...
             </>
           ) : (
-            "Actualizar métricas"
+            "Actualizar"
           )}
         </Button>
 

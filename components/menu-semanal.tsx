@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { ArrowLeft, Edit, Drumstick, Carrot, Loader2, ChefHat, Calendar, Clock, Badge, Flame, Users } from "lucide-react"
+import { ArrowLeft, Drumstick, Carrot, Loader2, Clock, Flame, Users } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { createClientSupabaseClient } from "@/lib/supabase"
 import { generateMenu } from "@/app/actions"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Badge } from "@/components/ui/badge"
 
 type MealDay = {
   id: string
@@ -29,6 +30,7 @@ export function MenuSemanal() {
   const toggleExpand = (index: number) => {
     setExpandedCard(expandedCard === index ? null : index)
   }
+  console.log({weekMenu})
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -122,7 +124,8 @@ export function MenuSemanal() {
         <div className="flex w-max space-x-4 p-1">
           {weekMenu.map((day, index) => {
             const recipeObj = JSON.parse(day.recipe)
-
+console.log('day',{day})
+console.log('recipeObj',{recipeObj})
             return (
               <Card
                 key={`${index}`}
@@ -236,7 +239,7 @@ export function MenuSemanal() {
 
       {/* Footer */}
   
-      <footer className="p-4 border-t">
+      {/* <footer className="p-4 border-t">
   
       <div>
           
@@ -272,7 +275,7 @@ export function MenuSemanal() {
           
           </div>
         </div>
-      </footer>
+      </footer> */}
       
     </div>
   )
