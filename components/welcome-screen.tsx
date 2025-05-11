@@ -1,11 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, Loader2 } from "lucide-react"
+import { Menu, Loader2, Calendar, ShoppingCart, Utensils, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { generateMenu } from "@/app/actions"
 
@@ -83,15 +82,15 @@ export function WelcomeScreen() {
       </header>
 
       {/* Contenido principal */}
-      <main className="flex-1 flex flex-col items-center justify-center p-6">
-        <div className="w-full max-w-md flex flex-col items-center">
+      <main className="flex-1 flex flex-col items-center p-6 justify-center">
+        <div className="w-full max-w-md flex flex-col">
           {/* Logo y nombre */}
-          <div className="mb-6 flex flex-col items-center">
-            <div className="h-24 w-24 relative mb-4">
+          <div className="mb-6 flex flex-col">
+            {/* <div className="h-24 w-24 relative mb-4">
               <Image src="/placeholder.svg?height=96&width=96" alt="Sabooor Logo" fill className="object-contain" />
-            </div>
+            </div> */}
             <h1 className="text-4xl font-bold mb-1">Sabooor</h1>
-            <p className="text-lg text-slate-500 italic">tu chefcito.</p>
+            <p className="text-lg text-slate-500 italic">tu chefcito...</p>
           </div>
 
           {/* Input y botón */}
@@ -116,15 +115,61 @@ export function WelcomeScreen() {
               )}
             </Button>
           </div>
+          
+          
+          {/* Vista previa de último menú */}
+        <div className="my-8">
+          <h2 className="font-medium mb-3">Favoritos</h2>
+          <div className="bg-white rounded-lg border p-4">
+            <div className="flex items-center">
+              <div className="flex px-3 py-1 font-medium"><Star className="h-5 w-5 fill-yellow-500" />x5</div>
+              <div className="ml-auto">
+                <Utensils className="h-5 w-5 text-slate-400" />
+              </div>
+            </div>
+            <h3 className="font-medium mt-2">Pollo al horno con verduras</h3>
+            <p className="text-sm text-slate-500">4 porciones</p>
+          </div>
+        </div>
+
+        
+
         </div>
       </main>
 
-      {/* Footer
+      
       <footer className="p-4 border-t">
-        <Button className="w-full" onClick={() => router.push("/dashboard")}>
-          Guardar y continuar
-        </Button>
-      </footer> */}
+      {/* Accesos rápidos */}
+      <div>
+          {/* <h2 className="text-lg font-medium mb-3">Accesos rápidos</h2> */}
+          <div className="grid grid-cols-3 gap-3">
+            <Button 
+              variant="outline" 
+              className="w-full h-auto py-3 flex flex-col items-center"
+              onClick={() => router.push("/menu-semanal")}
+            >
+              <Calendar className="h-5 w-5 mb-1" />
+              <span className="text-xs">Ver menú</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full h-auto py-3 flex flex-col items-center"
+              onClick={() => router.push("/lista-compra")}
+            >
+              <ShoppingCart className="h-5 w-5 mb-1" />
+              <span className="text-xs">Lista de compra</span>
+            </Button>
+            <Button 
+              variant="outline" 
+              className="w-full h-auto py-3 flex flex-col items-center"
+              onClick={() => router.push("/sobrantes")}
+            >
+              <Utensils className="h-5 w-5 mb-1" />
+              <span className="text-xs">Registrar sobrantes</span>
+            </Button>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
