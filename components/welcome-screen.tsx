@@ -143,22 +143,30 @@ export function WelcomeScreen() {
       {/* Accesos rápidos */}
       <div>
           {/* <h2 className="text-lg font-medium mb-3">Accesos rápidos</h2> */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-4 gap-3">
+          <Button 
+              variant="outline" 
+              className="w-full h-auto py-3 flex flex-col items-center"
+              onClick={() => router.push("/configuracion")}
+            >
+              <Calendar className="h-5 w-5 mb-1" />
+              <span className="text-xs">Gustos</span>
+            </Button>
             <Button 
               variant="outline" 
               className="w-full h-auto py-3 flex flex-col items-center"
               onClick={() => router.push("/menu-semanal")}
             >
               <Calendar className="h-5 w-5 mb-1" />
-              <span className="text-xs">Ver menú</span>
+              <span className="text-xs">Menú</span>
             </Button>
             <Button 
               variant="outline" 
               className="w-full h-auto py-3 flex flex-col items-center"
-              onClick={() => router.push("/lista-compra")}
+              onClick={() => router.push("/subir-factura")}
             >
               <ShoppingCart className="h-5 w-5 mb-1" />
-              <span className="text-xs">Lista de compra</span>
+              <span className="text-xs">Factura</span>
             </Button>
             <Button 
               variant="outline" 
@@ -166,7 +174,7 @@ export function WelcomeScreen() {
               onClick={() => router.push("/sobrantes")}
             >
               <Utensils className="h-5 w-5 mb-1" />
-              <span className="text-xs">Registrar sobrantes</span>
+              <span className="text-xs">Sobras</span>
             </Button>
           </div>
         </div>

@@ -66,7 +66,7 @@ export function SubirFactura() {
       </header>
 
       {/* Body */}
-      <main className="flex-1 p-4 flex flex-col items-center justify-center">
+      <main className="flex-1 p-4 flex flex-col items-center">
         {step === "upload" ? (
           <div className="w-full max-w-md">
             {error && (

@@ -43,7 +43,7 @@ export function RegistroSobrantes() {
       await saveLeftoversData(leftovers)
 
       // Redirigir al dashboard
-      router.push("/dashboard")
+      router.push("/")
     } catch (error) {
       console.error("Error saving leftovers:", error)
       // En caso de error, también redirigimos al dashboard

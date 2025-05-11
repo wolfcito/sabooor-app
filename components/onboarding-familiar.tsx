@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState } from "react"
-import { Minus, Plus, X, Loader2 } from "lucide-react"
+import { Minus, Plus, X, Loader2, ArrowLeft } from "lucide-react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -42,7 +42,8 @@ export function OnboardingFamiliar() {
     { id: "5", name: "Huevo", checked: false },
     { id: "6", name: "Soya", checked: false },
     { id: "7", name: "Vegetariano", checked: false },
-    { id: "8", name: "Vegano", checked: false },
+    { id: "8", name: "Carnes", checked: true },
+    { id: "9", name: "Vegano", checked: false },
   ])
 
   const [prohibitedDishes, setProhibitedDishes] = useState<string[]>([])
@@ -121,11 +122,11 @@ export function OnboardingFamiliar() {
       await saveFamilyData(familyMembers, restrictions, prohibitedDishes)
 
       // Redirigir al dashboard
-      router.push("/dashboard")
+      router.push("/")
     } catch (error) {
       console.error("Error saving family data:", error)
       // En caso de error, también redirigimos al dashboard
-      router.push("/dashboard")
+      router.push("/")
     } finally {
       setIsLoading(false)
     }
@@ -134,12 +135,14 @@ export function OnboardingFamiliar() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <header className="p-4 flex flex-col items-center border-b">
-        <div className="h-[60px] w-[60px] relative">
-          <Image src="/placeholder.svg?height=60&width=60" alt="Logo" fill className="object-contain" />
-        </div>
-        <h1 className="text-2xl font-medium mt-2">Configura tu familia</h1>
+      <header className="p-4 flex items-center border-b">
+        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft className="h-5 w-5" />
+          <span className="sr-only">Atrás</span>
+        </Button>
+        <h1 className="text-xl font-medium ml-2">Mis gustos</h1>
       </header>
+
 
       {/* Body */}
       <div className="flex-1 p-4 overflow-auto">
