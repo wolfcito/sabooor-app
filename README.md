@@ -1,36 +1,42 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sabooor
 
-## Getting Started
+Tu chefcito inteligente para planificar comidas familiares.
 
-First, run the development server:
+## Qué es Sabooor
+
+Sabooor es una app que ayuda a las familias a planificar sus comidas semanales, reducir el desperdicio de alimentos y ahorrar dinero. Usando inteligencia artificial, genera menús personalizados basados en las preferencias de tu familia.
+
+## Funcionalidades
+
+- **Menú Semanal** — Genera planes de comida para 7 días con un solo click
+- **Mis Gustos** — Configura tu familia, dietas y alimentos a evitar
+- **Recetas Detalladas** — Ingredientes, pasos y tiempos de preparación
+- **Lista de Compras** — Generada automáticamente desde tu menú
+- **Escaneo de Facturas** — Sube fotos y extrae productos automáticamente
+- **Control de Sobrantes** — Registra y recibe sugerencias para reutilizar
+- **Métricas** — Visualiza tu ahorro y reduce el desperdicio
+
+## Capturas
+
+| Inicio | Menú Semanal | Receta |
+|--------|--------------|--------|
+| Acceso rápido a todas las funciones | Plan semanal organizado por días | Ingredientes y pasos detallados |
+
+## Para quién es
+
+- Familias que quieren comer mejor sin complicarse
+- Personas que buscan reducir el desperdicio de comida
+- Quienes desean ahorrar tiempo y dinero en la cocina
+
+## Comenzar
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Licencia
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Proyecto privado - Good Wolf Labs
