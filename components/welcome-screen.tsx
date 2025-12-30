@@ -1,11 +1,12 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Menu, Loader2, Calendar, ShoppingCart, Utensils, Star, ChefHat, Settings, FileText, BarChart2 } from "lucide-react"
+import { Menu, Loader2, Heart, Utensils, FileText, BarChart3, ShoppingCart, Recycle, BookOpen } from "lucide-react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import { Card } from "@/components/ui/card"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { generateMenu } from "@/app/actions"
 import { createClientSupabaseClient } from "@/lib/supabase"
@@ -13,7 +14,7 @@ import { createClientSupabaseClient } from "@/lib/supabase"
 type MealDay = {
   id: string
   day: string
-  recipe: string    // JSON-string
+  recipe: string
   protein: string
   side: string
 }
@@ -22,15 +23,13 @@ export function WelcomeScreen() {
   const router = useRouter()
   const [prompt, setPrompt] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-
   const [weekMenu, setWeekMenu] = useState<MealDay[]>([])
-  const [favIndex, setFavIndex] = useState(0)
+  const [favIndex] = useState(0)
 
   useEffect(() => {
     const fetchMenu = async () => {
       const supabase = createClientSupabaseClient()
       const { data, error } = await supabase.from("weekly_menu").select("*")
-      console.log('data',{data})
       if (!error && data) setWeekMenu(data)
     }
     fetchMenu()
@@ -42,7 +41,6 @@ export function WelcomeScreen() {
 
   const handleCook = async () => {
     if (!prompt.trim()) {
-      // Si no hay prompt, simplemente redirigimos al menú semanal
       router.push("/menu-semanal")
       return
     }
@@ -50,34 +48,22 @@ export function WelcomeScreen() {
     setIsLoading(true)
 
     try {
-      // Llamamos a nuestra API route
       const response = await fetch("/api/generate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       })
 
-      if (!response.ok) {
-        throw new Error("Error en la generación del texto")
-      }
+      if (!response.ok) throw new Error("Error en la generación del texto")
 
-      const { text } = await response.json()
-      console.log("Respuesta del asistente:", text)
-
-      // Generamos el menú semanal usando la acción del servidor
+      await response.json()
       const result = await generateMenu()
 
-      if (!result.success) {
-        throw new Error("Error al generar el menú")
-      }
+      if (!result.success) throw new Error("Error al generar el menú")
 
-      // Redirigimos al menú semanal
       router.push("/menu-semanal")
     } catch (error) {
       console.error("Error processing prompt:", error)
-      // En caso de error, también redirigimos al menú semanal
       router.push("/menu-semanal")
     } finally {
       setIsLoading(false)
@@ -91,136 +77,151 @@ export function WelcomeScreen() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header con menú hamburguesa */}
-      <header className="p-4 flex items-center justify-between border-b">
+    <div className="flex flex-col min-h-screen bg-background">
+      {/* Header */}
+      <header className="px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 relative">
+            <Image src="/logo.png" alt="Sabooor" fill className="object-contain" />
+          </div>
+          <span className="text-xl font-bold text-foreground">Sabooor</span>
+        </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
               <Menu className="h-6 w-6" />
-              <span className="sr-only">Menú</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {/* <DropdownMenuItem onClick={() => router.push("/dashboard")}>Dashboard</DropdownMenuItem> */}
-            {/* <DropdownMenuItem onClick={() => router.push("/subir-factura")}>Subir factura</DropdownMenuItem> */}
-            {/* <DropdownMenuItem onClick={() => router.push("/menu-semanal")}>Menú semanal</DropdownMenuItem> */}
+          <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => router.push("/lista-compra")}>Lista de compra</DropdownMenuItem>
             <DropdownMenuItem onClick={() => router.push("/sobrantes")}>Registrar sobrantes</DropdownMenuItem>
-            {/* <DropdownMenuItem onClick={() => router.push("/metricas")}>Métricas y ahorro</DropdownMenuItem> */}
           </DropdownMenuContent>
         </DropdownMenu>
       </header>
 
-      {/* Contenido principal */}
-      <main className="flex-1 flex flex-col items-center p-6 justify-center">
-        <div className="w-full max-w-md flex flex-col">
-          {/* Logo y nombre */}
-          <div className="mb-6 flex items-center">
-            <div className="h-24 w-24 relative mb-4">
-              <Image src="/logo.png" alt="Sabooor Logo" fill className="object-contain" />
-            </div>
-            <div>
-            <h1 className="text-4xl font-bold mb-1">Sabooor</h1>
-            <p className="text-lg text-slate-500 italic">tu chefcito...</p>
+      {/* Main Content */}
+      <main className="flex-1 px-4 pb-4 overflow-auto">
+        {/* Title */}
+        <h1 className="text-2xl font-semibold text-center mb-4">
+          <span className="text-foreground">tu chefcito</span>
+          <span className="text-primary">...</span>
+        </h1>
+
+        {/* Search Input */}
+        <div className="flex gap-2 mb-6">
+          <div className="flex-1 relative">
+            <Input
+              placeholder="Genera el menú para esta semana..."
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              onKeyDown={handleKeyPress}
+              className="h-14 pl-4 pr-4 rounded-2xl bg-card border-border text-base"
+            />
+          </div>
+          <Button
+            className="h-14 w-14 rounded-2xl bg-primary hover:bg-primary/90"
+            onClick={handleCook}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Loader2 className="h-6 w-6 animate-spin text-white" />
+            ) : (
+              <BookOpen className="h-6 w-6 text-white" />
+            )}
+          </Button>
+        </div>
+
+        {/* Favorite Card */}
+        <Card className="mb-6 overflow-hidden rounded-2xl border-border">
+          <div className="relative h-48 bg-gradient-to-b from-teal-700 to-teal-800 flex items-center justify-center">
+            <div className="text-6xl">🍽️</div>
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
+              <div className="flex items-center gap-2 bg-white/90 backdrop-blur-sm rounded-full px-4 py-2">
+                <div className="h-2 w-2 rounded-full bg-primary" />
+                <span className="text-sm font-medium text-foreground">FAVORITO DE LA SEMANA</span>
+              </div>
             </div>
           </div>
-
-          {/* Input y botón */}
-          <div className="w-full space-y-4">
-            <div className="flex gap-2">
-              <Input
-                placeholder="Genera el menú para esta semana..."
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                onKeyDown={handleKeyPress}
-                className="h-12"
-              />
-              <Button 
-                className="h-12 w-12 rounded-lg p-0" 
-                onClick={handleCook} 
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <ChefHat className="h-5 w-5" />
-                )}
-              </Button>
-            </div>
-          </div>
-          
-          
-        {/* Favoritos */}
-      <div className="my-8">
-        <h2 className="font-medium mb-3">Favorito</h2>
-
-        {favoriteRecipe ? (
-          <div className="bg-white rounded-lg border p-4">
-            <div className="flex items-center mb-2">
-              <Star className="h-5 w-5 fill-yellow-500 mr-2" />
-              <span className="font-semibold">{favoriteRecipe.name}</span>
-            </div>
-            <p className="text-sm text-slate-500">
-              {favoriteRecipe.servings} porciones
+          <div className="p-4 text-center">
+            <h2 className="text-xl font-bold text-foreground mb-1">
+              {favoriteRecipe ? favoriteRecipe.name : "¿Qué vamos a cocinar?"}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {favoriteRecipe
+                ? favoriteRecipe.description
+                : "Aún no tienes favoritos. ¡Empieza a generar tu menú para descubrir nuevos sabores!"
+              }
             </p>
-            <div className="mt-2 text-sm text-slate-600 line-clamp-2">
-              {favoriteRecipe.description}
-            </div>
           </div>
-        ) : (
-          <p className="text-sm text-slate-500">Aún no hay un favorito generado.</p>
-        )}
-      </div>
+        </Card>
 
-        
+        {/* Quick Access Grid */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <Card
+            className="p-4 rounded-2xl border-border cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => router.push("/configuracion")}
+          >
+            <div className="h-10 w-10 rounded-xl bg-red-50 flex items-center justify-center mb-3">
+              <Heart className="h-5 w-5 text-red-400" />
+            </div>
+            <h3 className="font-semibold text-foreground">Gustos</h3>
+            <p className="text-sm text-muted-foreground">Preferencias</p>
+          </Card>
 
+          <Card
+            className="p-4 rounded-2xl border-border cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => router.push("/menu-semanal")}
+          >
+            <div className="h-10 w-10 rounded-xl bg-orange-50 flex items-center justify-center mb-3">
+              <Utensils className="h-5 w-5 text-primary" />
+            </div>
+            <h3 className="font-semibold text-foreground">Menú</h3>
+            <p className="text-sm text-muted-foreground">Plan semanal</p>
+          </Card>
+
+          <Card
+            className="p-4 rounded-2xl border-border cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => router.push("/subir-factura")}
+          >
+            <div className="h-10 w-10 rounded-xl bg-blue-50 flex items-center justify-center mb-3">
+              <FileText className="h-5 w-5 text-blue-400" />
+            </div>
+            <h3 className="font-semibold text-foreground">Factura</h3>
+            <p className="text-sm text-muted-foreground">Gastos</p>
+          </Card>
+
+          <Card
+            className="p-4 rounded-2xl border-border cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => router.push("/metricas")}
+          >
+            <div className="h-10 w-10 rounded-xl bg-pink-50 flex items-center justify-center mb-3">
+              <BarChart3 className="h-5 w-5 text-pink-400" />
+            </div>
+            <h3 className="font-semibold text-foreground">Reporte</h3>
+            <p className="text-sm text-muted-foreground">Análisis</p>
+          </Card>
+        </div>
+
+        {/* Bottom Action Buttons */}
+        <div className="flex gap-3">
+          <Button
+            variant="outline"
+            className="flex-1 h-14 rounded-2xl bg-red-50 border-red-100 hover:bg-red-100 text-red-400"
+            onClick={() => router.push("/lista-compra")}
+          >
+            <ShoppingCart className="h-5 w-5 mr-2" />
+            Lista
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-1 h-14 rounded-2xl bg-green-50 border-green-100 hover:bg-green-100 text-green-500"
+            onClick={() => router.push("/sobrantes")}
+          >
+            <Recycle className="h-5 w-5 mr-2" />
+            Sobrantes
+          </Button>
         </div>
       </main>
-
-      
-      <footer className="p-4 border-t">
-      {/* Accesos rápidos */}
-      <div>
-          {/* <h2 className="text-lg font-medium mb-3">Accesos rápidos</h2> */}
-          <div className="grid grid-cols-4 gap-3">
-          <Button 
-              variant="outline" 
-              className="w-full h-auto py-3 flex flex-col items-center"
-              onClick={() => router.push("/configuracion")}
-            >
-              <Settings className="h-5 w-5 mb-1" />
-              <span className="text-xs">Gustos</span>
-            </Button>
-           
-            <Button 
-              variant="outline" 
-              className="w-full h-auto py-3 flex flex-col items-center"
-              onClick={() => router.push("/subir-factura")}
-            >
-              <FileText className="h-5 w-5 mb-1" />
-              <span className="text-xs">Factura</span>
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="w-full h-auto py-3 flex flex-col items-center"
-              onClick={() => router.push("/metricas")}
-            >
-             <BarChart2 className="h-5 w-5 mb-1" />
-              <span className="text-xs">Reporte</span>
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full h-auto py-3 flex flex-col items-center"
-              onClick={() => router.push("/menu-semanal")}
-            > 
-            <Utensils className="h-5 w-5 mb-1" />  
-              <span className="text-xs">Menú</span>
-            </Button>
-          </div>
-        </div>
-      </footer>
     </div>
   )
 }
